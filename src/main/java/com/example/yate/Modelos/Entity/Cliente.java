@@ -69,7 +69,7 @@ public class Cliente {
 
         @Override
         public String toString() {
-            return "Cliente [nombre=" + nombre + ", apellido=" + apellido + ", email=" + email + ", id=" + id
-                    + ", createAt=" + createAt + "]";
+            return "Cliente nombre:" + nombre + ", apellido" + apellido + ", email" + email + ", id" + id
+                    + ", createAt" + createAt + "]";
         }
 }
