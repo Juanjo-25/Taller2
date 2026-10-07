@@ -27,6 +27,10 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
+    @Version
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long version;
+
     public Producto() { }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

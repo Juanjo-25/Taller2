@@ -6,7 +6,7 @@ import java.util.Locale;
 import com.example.yate.Modelos.Entity.Login;
 import com.example.yate.Modelos.Entity.Rol;
 import com.example.yate.Modelos.Form.RegistroForm;
-import com.example.yate.Modelos.Repository.LoginRepository;
+import com.example.yate.Modelos.DAO.LoginDAO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,26 +18,26 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class LoginService implements UserDetailsService {
-    private final LoginRepository loginRepository;
+    private final LoginDAO loginDAO;
     private final PasswordEncoder passwordEncoder;
     private final TransactionTemplate transaccion;
 
-    public LoginService(LoginRepository loginRepository, PasswordEncoder passwordEncoder, PlatformTransactionManager gestor) {
-        this.loginRepository = loginRepository;
+    public LoginService(LoginDAO loginDAO, PasswordEncoder passwordEncoder, PlatformTransactionManager gestor) {
+        this.loginDAO = loginDAO;
         this.passwordEncoder = passwordEncoder;
         this.transaccion = new TransactionTemplate(gestor);
     }
 
     public boolean necesitaAdministrador() {
-        return loginRepository.count() == 0;
+        return loginDAO.count() == 0;
     }
 
     public List<Login> listarPendientes() {
-        return loginRepository.findByActivoFalseOrderByIdAsc();
+        return loginDAO.findByActivoFalseOrderByIdAsc();
     }
 
     public Login buscarLogin(String email) {
-        return loginRepository.findByEmail(normalizarCorreo(email))
+        return loginDAO.findByEmail(normalizarCorreo(email))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
     }
 
@@ -61,7 +61,7 @@ public class LoginService implements UserDetailsService {
 
     private void crearCuenta(RegistroForm datos, boolean activo, Rol rol) {
         String email = normalizarCorreo(datos.getEmail());
-        if (loginRepository.existsByEmail(email)) {
+        if (loginDAO.existsByEmail(email)) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese correo");
         }
         if (datos.getContrasena().getBytes(StandardCharsets.UTF_8).length > 72) {
@@ -72,24 +72,24 @@ public class LoginService implements UserDetailsService {
         login.setContrasena(passwordEncoder.encode(datos.getContrasena()));
         login.setActivo(activo);
         login.setRol(rol);
-        loginRepository.saveAndFlush(login);
+        loginDAO.saveAndFlush(login);
     }
 
     @Transactional
     public void activarCuenta(Long id, Rol rol) {
-        Login login = loginRepository.findById(id)
+        Login login = loginDAO.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
         if (login.isActivo()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "La cuenta ya está activa");
         }
         login.setRol(rol);
         login.setActivo(true);
-        loginRepository.save(login);
+        loginDAO.save(login);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Login login = loginRepository.findByEmail(normalizarCorreo(email))
+        Login login = loginDAO.findByEmail(normalizarCorreo(email))
                 .orElseThrow(() -> new UsernameNotFoundException("Credenciales incorrectas"));
         return User.withUsername(login.getEmail()).password(login.getContrasena())
                 .roles(login.getRol().name()).disabled(!login.isActivo()).build();

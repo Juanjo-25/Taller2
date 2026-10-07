@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Iniciar sesión | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
-<body><nav th:replace="~{fragmentos/menu :: menu}"></nav><main class="acceso">
+<body><div th:replace="~{fragmentos/menu :: menu}"></div><main class="acceso">
 <h1>Iniciar sesión</h1><p>Ingrese con el correo de su cuenta.</p>
 <p class="mensaje" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
 <p class="error aviso" role="alert" th:if="${param.error != null}" th:text="${param.error[0] == 'inactiva' ? 'Su cuenta está pendiente de aprobación por un administrador.' : 'Correo o contraseña incorrectos.'}"></p>

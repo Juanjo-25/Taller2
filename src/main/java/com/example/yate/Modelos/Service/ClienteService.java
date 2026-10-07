@@ -3,7 +3,8 @@ package com.example.yate.Modelos.Service;
 import java.util.Date;
 import java.util.List;
 import com.example.yate.Modelos.Entity.Cliente;
-import com.example.yate.Modelos.Repository.ClienteRepository;
+import com.example.yate.Modelos.DAO.ClienteDAO;
+import com.example.yate.Modelos.DAO.EncabezadoDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,20 +13,22 @@ import org.springframework.http.HttpStatus;
 @Service
 @Transactional(readOnly = true)
 public class ClienteService {
-    private final ClienteRepository clienteRepository;
+    private final ClienteDAO clienteDAO;
+    private final EncabezadoDAO referencias;
     private final LoginService loginService;
 
-    public ClienteService(ClienteRepository clienteRepository, LoginService loginService) {
-        this.clienteRepository = clienteRepository;
+    public ClienteService(ClienteDAO clienteDAO, LoginService loginService, EncabezadoDAO referencias) {
+        this.clienteDAO = clienteDAO;
+        this.referencias = referencias;
         this.loginService = loginService;
     }
 
     public List<Cliente> listarClientes() {
-        return clienteRepository.findAll();
+        return clienteDAO.findAll();
     }
 
     public Cliente buscarCliente(Long id) {
-        return clienteRepository.findById(id)
+        return clienteDAO.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
     }
 
@@ -38,15 +41,15 @@ public class ClienteService {
         if (cliente.getId() == null) {
             cliente.setCreateAt(new Date());
         }
-        return clienteRepository.save(cliente);
+        return clienteDAO.save(cliente);
     }
 
     public boolean tienePerfil(String email) {
-        return clienteRepository.existsByLoginEmail(email);
+        return clienteDAO.existsByLoginEmail(email);
     }
 
     public Cliente buscarPerfil(String email) {
-        return clienteRepository.findByLoginEmail(email).orElseGet(() -> {
+        return clienteDAO.findByLoginEmail(email).orElseGet(() -> {
             Cliente cliente = new Cliente();
             cliente.setEmail(email);
             return cliente;
@@ -63,11 +66,14 @@ public class ClienteService {
             cliente.setCreateAt(new Date());
             cliente.setLogin(loginService.buscarLogin(email));
         }
-        clienteRepository.save(cliente);
+        clienteDAO.save(cliente);
     }
 
     @Transactional
     public void eliminarCliente(Long id) {
-        clienteRepository.delete(buscarCliente(id));
+        if (referencias.existsByClienteId(id)) {
+            throw new IllegalArgumentException("No puede eliminar un cliente con compras registradas");
+        }
+        clienteDAO.delete(buscarCliente(id));
     }
 }

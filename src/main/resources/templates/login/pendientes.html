@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cuentas pendientes | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
-<body><nav th:replace="~{fragmentos/menu :: menu}"></nav><main>
+<body><div th:replace="~{fragmentos/menu :: menu}"></div><main>
 <h1>Cuentas pendientes</h1><p class="mensaje" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
 <p th:if="${#lists.isEmpty(cuentas)}">No hay solicitudes pendientes.</p>
 <div class="tabla"><table th:unless="${#lists.isEmpty(cuentas)}"><thead><tr><th>Correo</th><th>Estado</th><th>Rol y aprobación</th></tr></thead>

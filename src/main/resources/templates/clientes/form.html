@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${titulo}"></title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
-<body><nav th:replace="~{fragmentos/menu :: menu}"></nav>
+<body><div th:replace="~{fragmentos/menu :: menu}"></div>
 <main><h1 th:text="${titulo}"></h1>
 <form class="formulario" th:action="@{/clientes/guardar}" th:object="${cliente}" method="post">
 <input type="hidden" th:field="*{id}">

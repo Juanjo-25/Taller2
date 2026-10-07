@@ -1,6 +1,6 @@
 package com.example.yate;
 
-import com.example.yate.Modelos.Repository.ClienteRepository;
+import com.example.yate.Modelos.DAO.ClienteDAO;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(roles = "ADMIN")
 class ClienteCrudTests {
     @Autowired MockMvc mvc;
-    @Autowired ClienteRepository repositorio;
+    @Autowired ClienteDAO repositorio;
 
     @Test
     void crearListarEditarEliminar() throws Exception {

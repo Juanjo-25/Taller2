@@ -2,7 +2,7 @@ package com.example.yate;
 
 import com.example.yate.Modelos.Entity.*;
 import com.example.yate.Modelos.Form.RegistroForm;
-import com.example.yate.Modelos.Repository.*;
+import com.example.yate.Modelos.DAO.*;
 import com.example.yate.Modelos.Service.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,8 @@ import static org.hamcrest.Matchers.containsString;
 @AutoConfigureMockMvc
 class LoginTests {
     @Autowired MockMvc mvc;
-    @Autowired LoginRepository cuentas;
-    @Autowired ClienteRepository clientes;
+    @Autowired LoginDAO cuentas;
+    @Autowired ClienteDAO clientes;
     @Autowired LoginService loginService;
     @Autowired PasswordEncoder codificador;
 
@@ -49,7 +49,7 @@ class LoginTests {
 
     private Login registrar(String email) throws Exception {
         mvc.perform(post("/login/registro").with(csrf()).param("email", email)
-                .param("contrasena", "Cliente123!"))
+                .param("contrasena", "1234"))
                 .andExpect(redirectedUrl("/login/ingresar"));
         return cuentas.findByEmail(email).orElseThrow();
     }
@@ -78,9 +78,9 @@ class LoginTests {
         Login cliente = registrar("cliente@example.com");
         assertThat(cliente.isActivo()).isFalse();
         assertThat(cliente.getRol()).isEqualTo(Rol.CLIENTE);
-        assertThat(cliente.getContrasena()).isNotEqualTo("Cliente123!");
+        assertThat(cliente.getContrasena()).isNotEqualTo("1234");
         mvc.perform(post("/login/ingresar").with(csrf()).param("email", cliente.getEmail())
-                .param("contrasena", "Cliente123!"))
+                .param("contrasena", "1234"))
                 .andExpect(redirectedUrl("/login/ingresar?error=inactiva"));
         MockHttpSession admin = ingresar("admin@example.com", "Admin123!");
         mvc.perform(get("/login/pendientes").session(admin)).andExpect(status().isOk())
@@ -90,7 +90,7 @@ class LoginTests {
         mvc.perform(post("/login/ingresar").with(csrf()).param("email", cliente.getEmail())
                 .param("contrasena", "incorrecta"))
                 .andExpect(redirectedUrl("/login/ingresar?error=credenciales"));
-        MockHttpSession sesion = ingresar(" CLIENTE@example.com ", "Cliente123!");
+        MockHttpSession sesion = ingresar(" CLIENTE@example.com ", "1234");
         mvc.perform(get("/").session(sesion)).andExpect(redirectedUrl("/clientes/perfil"));
         mvc.perform(get("/clientes/perfil").session(sesion)).andExpect(status().isOk());
         mvc.perform(get("/clientes/listar").session(sesion)).andExpect(status().isForbidden());
@@ -110,11 +110,11 @@ class LoginTests {
                 .andExpect(model().attributeHasFieldErrors("registro", "email", "contrasena"));
         assertThat(cuentas.count()).isEqualTo(1);
         mvc.perform(post("/login/registro").with(csrf()).param("email", " ADMIN@example.com ")
-                .param("contrasena", "Cliente123!"))
+                .param("contrasena", "1234"))
                 .andExpect(status().isOk());
         assertThat(cuentas.count()).isEqualTo(1);
         mvc.perform(post("/login/registro").param("email", "nuevo@example.com")
-                .param("contrasena", "Cliente123!"))
+                .param("contrasena", "1234"))
                 .andExpect(status().isForbidden());
         mvc.perform(get("/clientes/listar")).andExpect(redirectedUrl("/login/ingresar"));
     }
@@ -125,7 +125,7 @@ class LoginTests {
         loginService.activarCuenta(cuenta.getId(), Rol.CLIENTE);
         Cliente ajeno = new Cliente("Otro", "Cliente", "otro@example.com", null, new java.util.Date());
         ajeno = clientes.saveAndFlush(ajeno);
-        MockHttpSession sesion = ingresar(cuenta.getEmail(), "Cliente123!");
+        MockHttpSession sesion = ingresar(cuenta.getEmail(), "1234");
         mvc.perform(post("/clientes/perfil").session(sesion).with(csrf())
                 .param("id", ajeno.getId().toString()).param("nombre", "Ana")
                 .param("apellido", "Perez").param("email", "contacto@example.com")
@@ -152,7 +152,7 @@ class LoginTests {
         mvc.perform(get("/clientes/listar").session(admin)).andExpect(status().isOk());
         mvc.perform(post("/login/activar/" + cuenta.getId()).session(admin).with(csrf())
                 .param("rol", "ADMIN")).andExpect(redirectedUrl("/login/pendientes"));
-        MockHttpSession nuevo = ingresar(cuenta.getEmail(), "Cliente123!");
+        MockHttpSession nuevo = ingresar(cuenta.getEmail(), "1234");
         mvc.perform(get("/login/pendientes").session(nuevo)).andExpect(status().isOk());
         mvc.perform(post("/login/activar/" + cuenta.getId()).session(admin).with(csrf())
                 .param("rol", "ADMIN")).andExpect(status().isConflict());

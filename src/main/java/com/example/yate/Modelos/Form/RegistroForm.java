@@ -9,9 +9,7 @@ public class RegistroForm {
     private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 8, max = 64, message = "Use entre 8 y 64 caracteres")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^\\p{L}\\p{N}\\s])\\S+$",
-             message = "Incluya mayúscula, minúscula, número y símbolo, sin espacios")
+    @Size(min = 4, max = 64, message = "Use entre 4 y 64 caracteres")
     private String contrasena;
 
     public String getEmail() { return email; }

@@ -67,7 +67,12 @@ public class ProductoController {
 
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes mensajes) {
-        productoService.eliminarProducto(id);
+        try {
+            productoService.eliminarProducto(id);
+        } catch (IllegalArgumentException | org.springframework.dao.DataIntegrityViolationException error) {
+            mensajes.addFlashAttribute("error", "No puede eliminar un producto incluido en una compra");
+            return "redirect:/productos/listar";
+        }
         mensajes.addFlashAttribute("mensaje", "Producto eliminado correctamente");
         return "redirect:/productos/listar";
     }

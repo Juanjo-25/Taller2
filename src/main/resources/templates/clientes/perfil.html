@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mi perfil | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
-<body><nav th:replace="~{fragmentos/menu :: menu}"></nav><main><h1>Mi perfil</h1>
+<body><div th:replace="~{fragmentos/menu :: menu}"></div><main><h1>Mi perfil</h1>
 <p th:if="${cliente.id == null}">Complete sus datos personales para continuar.</p>
 <p class="mensaje" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
 <form class="formulario" th:action="@{/clientes/perfil}" th:object="${cliente}" method="post">

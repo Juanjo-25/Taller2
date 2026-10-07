@@ -85,7 +85,12 @@ public class ClienteController {
 
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes mensajes) {
-        clienteService.eliminarCliente(id);
+        try {
+            clienteService.eliminarCliente(id);
+        } catch (IllegalArgumentException | org.springframework.dao.DataIntegrityViolationException error) {
+            mensajes.addFlashAttribute("error", "No puede eliminar un cliente con compras registradas");
+            return "redirect:/clientes/listar";
+        }
         mensajes.addFlashAttribute("mensaje", "Cliente eliminado correctamente");
         return "redirect:/clientes/listar";
     }
