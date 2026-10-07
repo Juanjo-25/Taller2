@@ -13,9 +13,11 @@ import org.springframework.http.HttpStatus;
 @Transactional(readOnly = true)
 public class ClienteService {
     private final ClienteRepository clienteRepository;
+    private final LoginService loginService;
 
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository, LoginService loginService) {
         this.clienteRepository = clienteRepository;
+        this.loginService = loginService;
     }
 
     public List<Cliente> listarClientes() {
@@ -37,6 +39,31 @@ public class ClienteService {
             cliente.setCreateAt(new Date());
         }
         return clienteRepository.save(cliente);
+    }
+
+    public boolean tienePerfil(String email) {
+        return clienteRepository.existsByLoginEmail(email);
+    }
+
+    public Cliente buscarPerfil(String email) {
+        return clienteRepository.findByLoginEmail(email).orElseGet(() -> {
+            Cliente cliente = new Cliente();
+            cliente.setEmail(email);
+            return cliente;
+        });
+    }
+
+    @Transactional
+    public void guardarPerfil(String email, Cliente datos) {
+        Cliente cliente = buscarPerfil(email);
+        cliente.setNombre(datos.getNombre().trim());
+        cliente.setApellido(datos.getApellido().trim());
+        cliente.setEmail(datos.getEmail().trim());
+        if (cliente.getId() == null) {
+            cliente.setCreateAt(new Date());
+            cliente.setLogin(loginService.buscarLogin(email));
+        }
+        clienteRepository.save(cliente);
     }
 
     @Transactional

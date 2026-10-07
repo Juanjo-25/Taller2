@@ -3,6 +3,7 @@ package com.example.yate.Controllers;
 import com.example.yate.Modelos.Entity.Cliente;
 import com.example.yate.Modelos.Service.ClienteService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -63,6 +64,23 @@ public class ClienteController {
         clienteService.guardarCliente(cliente);
         mensajes.addFlashAttribute("mensaje", "Cliente guardado correctamente");
         return "redirect:/clientes/listar";
+    }
+
+    @GetMapping("/perfil")
+    public String perfil(Principal usuario, Model model) {
+        model.addAttribute("cliente", clienteService.buscarPerfil(usuario.getName()));
+        return "clientes/perfil";
+    }
+
+    @PostMapping("/perfil")
+    public String guardarPerfil(Principal usuario, @Valid @ModelAttribute("cliente") Cliente cliente,
+                                BindingResult resultado, RedirectAttributes mensajes) {
+        if (resultado.hasErrors()) {
+            return "clientes/perfil";
+        }
+        clienteService.guardarPerfil(usuario.getName(), cliente);
+        mensajes.addFlashAttribute("mensaje", "Datos personales guardados correctamente");
+        return "redirect:/clientes/perfil";
     }
 
     @PostMapping("/eliminar/{id}")

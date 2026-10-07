@@ -34,3 +34,8 @@ build/
 
 ### Base de datos local ###
 data/
+
+### Credenciales locales ###
+.env
+.env.*
+!.env.example

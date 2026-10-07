@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Iniciar sesión | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
+<body><nav th:replace="~{fragmentos/menu :: menu}"></nav><main class="acceso">
+<h1>Iniciar sesión</h1><p>Ingrese con el correo de su cuenta.</p>
+<p class="mensaje" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
+<p class="error aviso" role="alert" th:if="${param.error != null}" th:text="${param.error[0] == 'inactiva' ? 'Su cuenta está pendiente de aprobación por un administrador.' : 'Correo o contraseña incorrectos.'}"></p>
+<p class="mensaje" role="status" th:if="${param.salida != null}">Sesión cerrada correctamente.</p>
+<th:block th:if="${necesitaAdministrador}"><p>Configure la primera cuenta para comenzar.</p><a class="boton" th:href="@{/login/inicializar}">Crear administrador inicial</a></th:block>
+<form th:unless="${necesitaAdministrador}" class="formulario" th:action="@{/login/ingresar}" method="post">
+<label for="email">Correo electrónico</label><input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
+<label for="contrasena">Contraseña</label><input id="contrasena" name="contrasena" type="password" autocomplete="current-password" required>
+<button type="submit">Ingresar</button><a th:href="@{/login/registro}">Crear una cuenta</a>
+</form></main></body></html>

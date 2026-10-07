@@ -1,4 +1,14 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<body><nav th:fragment="menu"><a th:href="@{/}">Yate</a><a th:href="@{/clientes/listar}">Clientes</a></nav></body>
-</html>
+<body><nav th:fragment="menu" aria-label="Menú principal">
+<a th:href="@{/}">Yate</a>
+<th:block th:if="${sesionIniciada}">
+<a th:href="@{/home}">Inicio</a>
+<a th:if="${esAdmin}" th:href="@{/clientes/listar}">Clientes</a>
+<a th:if="${esAdmin}" th:href="@{/productos/listar}">Productos</a>
+<a th:if="${esAdmin}" th:href="@{/login/pendientes}">Cuentas pendientes</a>
+<a th:unless="${esAdmin}" th:href="@{/clientes/perfil}">Mi perfil</a>
+<form th:action="@{/login/salir}" method="post"><button type="submit">Cerrar sesión</button></form>
+</th:block>
+<th:block th:unless="${sesionIniciada}"><a th:href="@{/login/ingresar}">Ingresar</a><a th:href="@{/login/registro}">Registrarse</a></th:block>
+</nav></body></html>

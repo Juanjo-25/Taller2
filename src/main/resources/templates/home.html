@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inicio | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
+<body><nav th:replace="~{fragmentos/menu :: menu}"></nav><main><h1>Bienvenido a Yate</h1>
+<div th:if="${esAdmin}"><p>Administre los clientes, los productos y apruebe las solicitudes de acceso.</p><div class="acciones"><a class="boton" th:href="@{/clientes/listar}">Gestionar clientes</a><a class="boton" th:href="@{/productos/listar}">Gestionar productos</a><a class="boton" th:href="@{/login/pendientes}">Revisar cuentas pendientes</a></div></div>
+<div th:unless="${esAdmin}"><p>Consulte y actualice sus datos personales.</p><a class="boton" th:href="@{/clientes/perfil}">Mi perfil</a></div>
+</main></body></html>

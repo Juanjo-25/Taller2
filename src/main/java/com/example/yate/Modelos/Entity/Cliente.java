@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Cliente {
@@ -27,6 +29,12 @@ public class Cliente {
         @Size(max = 254, message = "Máximo 254 caracteres")
         private String email;
         private Date createAt;
+        @OneToOne
+        @JoinColumn(name = "login_id", unique = true)
+        private Login login;
+
+        public Login getLogin() { return login; }
+        public void setLogin(Login login) { this.login = login; }
 
         public Cliente() {
         }

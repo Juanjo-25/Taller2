@@ -19,3 +19,14 @@ input { padding: 10px; font: inherit; border: 1px solid #8a96a8; border-radius: 
 .error { color: #a32b34; font-size: 14px; }
 .mensaje { background: #e4f4e9; padding: 12px; color: #205b35; }
 @media (max-width: 600px) { main { margin: 16px; padding: 16px; } }
+
+nav { flex-wrap: wrap; align-items: center; }
+nav form { margin: 0 0 0 auto; }
+nav button { background: #294f78; }
+.acceso { max-width: 600px; }
+select { padding: 10px; border: 1px solid #8a96a8; border-radius: 5px; font: inherit; }
+.aviso { background: #fff0f0; padding: 12px; }
+small { line-height: 1.5; color: #526078; }
+
+textarea { padding: 10px; font: inherit; border: 1px solid #8a96a8; border-radius: 5px; resize: vertical; }
+main > div > .acciones { flex-wrap: wrap; }

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${titulo}"></title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
+<body><nav th:replace="~{fragmentos/menu :: menu}"></nav><main><h1 th:text="${titulo}"></h1>
+<form class="formulario" th:action="@{/productos/guardar}" th:object="${producto}" method="post">
+<input type="hidden" th:field="*{id}">
+<label for="nombre">Nombre</label><input id="nombre" th:field="*{nombre}" required maxlength="100"><span class="error" th:errors="*{nombre}"></span>
+<label for="descripcion">Descripción</label><textarea id="descripcion" th:field="*{descripcion}" required maxlength="1000" rows="4"></textarea><span class="error" th:errors="*{descripcion}"></span>
+<label for="valorUnitario">Valor unitario</label><input id="valorUnitario" type="number" th:field="*{valorUnitario}" required min="0.01" max="9999999999.99" step="0.01"><span class="error" th:errors="*{valorUnitario}"></span>
+<label for="stock">Stock</label><input id="stock" type="number" th:field="*{stock}" required min="0" max="2147483647" step="1"><span class="error" th:errors="*{stock}"></span>
+<div class="acciones"><button type="submit">Guardar producto</button><a th:href="@{/productos/listar}">Cancelar</a></div>
+</form></main></body></html>
