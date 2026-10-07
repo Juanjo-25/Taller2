@@ -3,6 +3,9 @@ package com.example.yate.Modelos.Entity;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,7 +16,16 @@ public class Cliente {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-        private String nombre, apellido, email;
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(max = 100, message = "Máximo 100 caracteres")
+        private String nombre;
+        @NotBlank(message = "El apellido es obligatorio")
+        @Size(max = 100, message = "Máximo 100 caracteres")
+        private String apellido;
+        @NotBlank(message = "El correo es obligatorio")
+        @Email(message = "Ingrese un correo válido")
+        @Size(max = 254, message = "Máximo 254 caracteres")
+        private String email;
         private Date createAt;
 
         public Cliente() {

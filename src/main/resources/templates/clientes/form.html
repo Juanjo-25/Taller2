@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${titulo}"></title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
+<body><nav th:replace="~{fragmentos/menu :: menu}"></nav>
+<main><h1 th:text="${titulo}"></h1>
+<form class="formulario" th:action="@{/clientes/guardar}" th:object="${cliente}" method="post">
+<input type="hidden" th:field="*{id}">
+<label for="nombre">Nombre</label><input id="nombre" th:field="*{nombre}" required maxlength="100" autocomplete="given-name"><span class="error" th:errors="*{nombre}"></span>
+<label for="apellido">Apellido</label><input id="apellido" th:field="*{apellido}" required maxlength="100" autocomplete="family-name"><span class="error" th:errors="*{apellido}"></span>
+<label for="email">Correo electrónico</label><input id="email" type="email" th:field="*{email}" required maxlength="254" autocomplete="email"><span class="error" th:errors="*{email}"></span>
+<div class="acciones"><button type="submit">Guardar cliente</button><a th:href="@{/clientes/listar}">Cancelar</a></div>
+</form></main></body></html>
