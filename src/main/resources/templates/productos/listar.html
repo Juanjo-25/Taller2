@@ -1,10 +1,91 @@
-<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inventario | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head><body><div th:replace="~{fragmentos/menu :: menu}"></div><main class="inventario" id="inventario">
-<header class="encabezado-pagina"><div class="titulo-grupo"><span class="etiqueta">GESTIÓN DE INVENTARIO</span><h1>Productos <span class="contador" th:text="${#lists.size(productos) + ' registros'}"></span></h1></div><a class="boton" th:href="@{/productos/form}">＋ Añadir producto</a></header>
-<p class="error aviso" role="alert" th:if="${error}" th:text="${error}"></p><p class="mensaje" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
-<div class="inventario-layout"><aside class="filtros"><form id="filtros-inventario"><h2>Filtros de inventario</h2><fieldset><legend>ESTADO DEL STOCK</legend><label class="opcion-filtro"><input type="radio" name="estado" value="todos" checked>Todos <span data-conteo="todos"></span></label><label class="opcion-filtro"><input type="radio" name="estado" value="disponible">Disponible <span data-conteo="disponible"></span></label><label class="opcion-filtro"><input type="radio" name="estado" value="bajo">Stock bajo <span data-conteo="bajo"></span></label><label class="opcion-filtro"><input type="radio" name="estado" value="agotado">Agotado <span data-conteo="agotado"></span></label></fieldset>
-<label for="orden">ORDENAR POR</label><select id="orden" name="orden"><option value="nombre">Nombre: A–Z</option><option value="stock">Menor stock</option><option value="precio">Menor precio</option><option value="reciente">Más recientes</option></select>
-<label for="precio-min">PRECIO MÍNIMO</label><input id="precio-min" name="minimo" type="number" min="0" step="0.01" placeholder="Sin mínimo"><label for="precio-max">PRECIO MÁXIMO</label><input id="precio-max" name="maximo" type="number" min="0" step="0.01" placeholder="Sin máximo"><small>Stock bajo: entre 1 y 5 unidades.</small><button class="boton-secundario" type="reset">↻ Restablecer filtros</button></form></aside>
-<section class="panel-productos" aria-label="Productos del inventario"><div class="barra-productos"><label class="buscador" for="buscar-producto"><span aria-hidden="true">⌕</span><input id="buscar-producto" type="search" placeholder="Buscar por nombre, descripción o ID…"></label><button class="boton-secundario" type="button" id="vista-productos" aria-pressed="false">▦ Vista de tarjetas</button></div><div class="estado-lista"><span id="resultado-productos" role="status" aria-live="polite"></span><span><i class="punto"></i> Inventario registrado</span></div>
-<p th:if="${#lists.isEmpty(productos)}" class="vacio">Todavía no hay productos. Añada el primero para empezar a gestionar su inventario.</p><div class="lista-productos" id="lista-productos"><article class="fila-producto" th:each="producto : ${productos}" th:attr="data-id=${producto.id},data-nombre=${producto.nombre},data-descripcion=${producto.descripcion},data-stock=${producto.stock},data-precio=${producto.valorUnitario}">
-<div class="miniatura" aria-hidden="true"><svg width="30" height="32" viewBox="0 0 30 32" fill="none"><path d="m3 9 12-6 12 6-12 6Z" stroke="currentColor" stroke-width="1.6"/><path d="M3 9v14l12 6 12-6V9M15 15v14M9 6l12 6v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div><div class="datos-producto"><h2 th:text="${producto.nombre}"></h2><p th:text="${producto.descripcion}"></p><div class="meta-producto"><span th:text="${'ID #' + producto.id}"></span><span class="estado-stock" th:classappend="${producto.stock == 0 ? 'agotado' : (producto.stock <= 5 ? 'stock-bajo' : '')}" th:text="${producto.stock == 0 ? 'Agotado' : producto.stock + ' en stock'}"></span></div></div>
-<div class="precio-producto"><span>VALOR UNITARIO</span><strong th:text="${'$ ' + #numbers.formatDecimal(producto.valorUnitario, 1, 'POINT', 2, 'COMMA')}"></strong></div><div class="acciones-producto"><a class="boton-secundario" th:href="@{/productos/form/{id}(id=${producto.id})}">Editar</a><form th:action="@{/productos/eliminar/{id}(id=${producto.id})}" method="post" onsubmit="return confirm('¿Eliminar este producto?');"><button class="eliminar" type="submit">Eliminar</button></form></div></article></div><p id="sin-resultados" class="vacio" hidden>No hay productos que coincidan con los filtros.</p></section></div></main></body></html>
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inventario | Yate</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+    <div th:replace="~{fragmentos/menu :: menu}"></div>
+    <main class="inventario" id="inventario">
+        <header class="encabezado-pagina">
+            <div class="titulo-grupo"><span class="etiqueta">GESTIÓN DE INVENTARIO</span>
+                <h1>Productos <span class="contador" th:text="${#lists.size(productos) + ' registros'}"></span></h1>
+            </div><a class="boton" th:href="@{/productos/form}">＋ Añadir producto</a>
+        </header>
+        <p class="error aviso" role="alert" th:if="${error}" th:text="${error}"></p>
+        <p class="mensaje" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
+        <div class="inventario-layout">
+            <aside class="filtros">
+                <form id="filtros-inventario">
+                    <h2>Filtros de inventario</h2>
+                    <fieldset>
+                        <legend>ESTADO DEL STOCK</legend><label class="opcion-filtro"><input type="radio" name="estado"
+                                value="todos" checked>Todos <span data-conteo="todos"></span></label><label
+                            class="opcion-filtro"><input type="radio" name="estado" value="disponible">Disponible <span
+                                data-conteo="disponible"></span></label><label class="opcion-filtro"><input type="radio"
+                                name="estado" value="bajo">Stock bajo <span data-conteo="bajo"></span></label><label
+                            class="opcion-filtro"><input type="radio" name="estado" value="agotado">Agotado <span
+                                data-conteo="agotado"></span></label>
+                    </fieldset>
+                    <label for="orden">ORDENAR POR</label><select id="orden" name="orden">
+                        <option value="nombre">Nombre: A–Z</option>
+                        <option value="stock">Menor stock</option>
+                        <option value="precio">Menor precio</option>
+                        <option value="reciente">Más recientes</option>
+                    </select>
+                    <label for="precio-min">PRECIO MÍNIMO</label><input id="precio-min" name="minimo" type="number"
+                        min="0" step="0.01" placeholder="Sin mínimo"><label for="precio-max">PRECIO MÁXIMO</label><input
+                        id="precio-max" name="maximo" type="number" min="0" step="0.01"
+                        placeholder="Sin máximo"><small>Stock bajo: entre 1 y 5 unidades.</small><button
+                        class="boton-secundario" type="reset">↻ Restablecer filtros</button>
+                </form>
+            </aside>
+            <section class="panel-productos" aria-label="Productos del inventario">
+                <div class="barra-productos"><label class="buscador" for="buscar-producto"><span
+                            aria-hidden="true">⌕</span><input id="buscar-producto" type="search"
+                            placeholder="Buscar por nombre, descripción o ID…"></label><button class="boton-secundario"
+                        type="button" id="vista-productos" aria-pressed="false">▦ Vista de tarjetas</button></div>
+                <div class="estado-lista"><span id="resultado-productos" role="status"
+                        aria-live="polite"></span><span><i class="punto"></i> Inventario registrado</span></div>
+                <p th:if="${#lists.isEmpty(productos)}" class="vacio">Todavía no hay productos. Añada el primero para
+                    empezar a gestionar su inventario.</p>
+                <div class="lista-productos" id="lista-productos">
+                    <article class="fila-producto" th:each="producto : ${productos}"
+                        th:attr="data-id=${producto.id},data-nombre=${producto.nombre},data-descripcion=${producto.descripcion},data-stock=${producto.stock},data-precio=${producto.valorUnitario}">
+                        <div class="miniatura" aria-hidden="true"><svg width="30" height="32" viewBox="0 0 30 32"
+                                fill="none">
+                                <path d="m3 9 12-6 12 6-12 6Z" stroke="currentColor" stroke-width="1.6" />
+                                <path d="M3 9v14l12 6 12-6V9M15 15v14M9 6l12 6v6" stroke="currentColor"
+                                    stroke-width="1.6" stroke-linejoin="round" />
+                            </svg></div>
+                        <div class="datos-producto">
+                            <h2 th:text="${producto.nombre}"></h2>
+                            <p th:text="${producto.descripcion}"></p>
+                            <div class="meta-producto"><span th:text="${'ID #' + producto.id}"></span><span
+                                    class="estado-stock"
+                                    th:classappend="${producto.stock == 0 ? 'agotado' : (producto.stock <= 5 ? 'stock-bajo' : '')}"
+                                    th:text="${producto.stock == 0 ? 'Agotado' : producto.stock + ' en stock'}"></span>
+                            </div>
+                        </div>
+                        <div class="precio-producto"><span>VALOR UNITARIO</span><strong
+                                th:text="${'$ ' + #numbers.formatDecimal(producto.valorUnitario, 1, 'POINT', 2, 'COMMA')}"></strong>
+                        </div>
+                        <div class="acciones-producto"><a class="boton-secundario"
+                                th:href="@{/productos/form/{id}(id=${producto.id})}">Editar</a>
+                            <form th:action="@{/productos/eliminar/{id}(id=${producto.id})}" method="post"
+                                onsubmit="return confirm('¿Eliminar este producto?');"><button class="eliminar"
+                                    type="submit">Eliminar</button></form>
+                        </div>
+                    </article>
+                </div>
+                <p id="sin-resultados" class="vacio" hidden>No hay productos que coincidan con los filtros.</p>
+            </section>
+        </div>
+    </main>
+</body>
+
+</html>

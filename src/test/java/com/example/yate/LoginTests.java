@@ -182,7 +182,7 @@ class LoginTests {
         for (String ruta : new String[]{"/", "/productos/listar", "/clientes/listar", "/encabezados/listar", "/detalles/listar", "/login/pendientes"}) {
             mvc.perform(get(ruta).session(sesion)).andExpect(status().isOk());
         }
-        mvc.perform(get("/").session(sesion)).andExpect(content().string(containsString("Superadmin")));
+        mvc.perform(get("/").session(sesion)).andExpect(content().string(containsString("Admin principal")));
         mvc.perform(post("/login/activar/" + pendiente.getId()).session(sesion).with(csrf())
                 .param("rol", "SUPER_ADMIN")).andExpect(redirectedUrl("/login/pendientes"));
         assertThat(cuentas.findById(pendiente.getId()).orElseThrow().getRol()).isEqualTo(Rol.SUPER_ADMIN);

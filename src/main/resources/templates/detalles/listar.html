@@ -1,1 +1,42 @@
-<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Compras | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head><body><div th:replace="~{fragmentos/menu :: menu}"></div><main><h1>Detalles de compras</h1><p th:if="${#lists.isEmpty(detalles)}">No hay detalles registrados.</p><div class="tabla"><table th:unless="${#lists.isEmpty(detalles)}"><thead><tr><th>ID</th><th>Compra</th><th>Producto</th><th>Cantidad</th><th>Subtotal</th></tr></thead><tbody><tr th:each="detalle : ${detalles}"><td th:text="${detalle.id}"></td><td><a th:href="@{/encabezados/ver/{id}(id=${detalle.encabezado.id})}" th:text="${detalle.encabezado.id}"></a></td><td th:text="${detalle.producto.nombre}"></td><td th:text="${detalle.cantidad}"></td><td th:text="${#numbers.formatDecimal(detalle.valor, 1, 2)}"></td></tr></tbody></table></div></main></body></html>
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Compras | Yate</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+    <div th:replace="~{fragmentos/menu :: menu}"></div>
+    <main>
+        <h1>Detalles de compras</h1>
+        <p th:if="${#lists.isEmpty(detalles)}">No hay detalles registrados.</p>
+        <div class="tabla">
+            <table th:unless="${#lists.isEmpty(detalles)}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Compra</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="detalle : ${detalles}">
+                        <td th:text="${detalle.id}"></td>
+                        <td><a th:href="@{/encabezados/ver/{id}(id=${detalle.encabezado.id})}"
+                                th:text="${detalle.encabezado.id}"></a></td>
+                        <td th:text="${detalle.producto.nombre}"></td>
+                        <td th:text="${detalle.cantidad}"></td>
+                        <td th:text="${#numbers.formatDecimal(detalle.valor, 1, 2)}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+
+</html>

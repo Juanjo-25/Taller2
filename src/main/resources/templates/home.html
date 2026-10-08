@@ -1,6 +1,83 @@
-<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Resumen | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head><body><div th:replace="~{fragmentos/menu :: menu}"></div><main>
-<header class="encabezado-pagina"><div><span class="etiqueta">PANEL DE CONTROL</span><h1 th:text="${esAdmin ? 'Inventario y ventas' : 'Resumen de mi cuenta'}"></h1><p>Consulte existencias y operaciones registradas en el sistema.</p></div><a class="boton" th:if="${esAdmin}" th:href="@{/productos/form}">＋ Añadir producto</a><a class="boton" th:unless="${esAdmin}" th:href="@{/encabezados/compra}">＋ Nueva compra</a></header>
-<section class="indicadores" aria-label="Resumen de operaciones"><article th:if="${esAdmin}"><span>PRODUCTOS</span><strong th:text="${numeroProductos}"></strong><small>Referencias registradas</small></article><article th:if="${esAdmin}"><span>UNIDADES EN STOCK</span><strong th:text="${unidades}"></strong><small>Existencias disponibles</small></article><article><span th:text="${esAdmin ? 'VENTAS REGISTRADAS' : 'MIS COMPRAS'}"></span><strong th:text="${numeroVentas}"></strong><small>Operaciones totales</small></article><article><span th:text="${esAdmin ? 'IMPORTE DE VENTAS' : 'TOTAL DE MIS COMPRAS'}"></span><strong class="importe" th:text="${'$ ' + #numbers.formatDecimal(totalVentas, 1, 'POINT', 2, 'COMMA')}"></strong><small>Acumulado registrado</small></article></section>
-<div class="dashboard-layout"><section class="panel"><header class="panel-titulo"><h2 th:text="${esAdmin ? 'Últimas ventas' : 'Mis últimas compras'}"></h2><a th:href="@{/encabezados/listar}">Ver todas ↗</a></header><p class="vacio" th:if="${#lists.isEmpty(compras)}">Todavía no hay operaciones registradas.</p><div class="tabla" th:unless="${#lists.isEmpty(compras)}"><table><thead><tr><th>OPERACIÓN</th><th>CLIENTE</th><th>FECHA</th><th>TOTAL</th></tr></thead><tbody><tr th:each="compra : ${compras}"><td><a th:href="@{/encabezados/ver/{id}(id=${compra.id})}" th:text="${'#' + compra.id}"></a></td><td th:text="${compra.cliente.nombre + ' ' + compra.cliente.apellido}"></td><td th:text="${#temporals.format(compra.fecha, 'dd/MM/yyyy')}"></td><td th:text="${#numbers.formatDecimal(compra.total, 1, 'POINT', 2, 'COMMA')}"></td></tr></tbody></table></div></section>
-<section class="panel" th:if="${esAdmin}"><header class="panel-titulo"><h2>Alertas de stock</h2><span class="contador" th:text="${#lists.size(alertas)}"></span></header><p class="vacio" th:if="${#lists.isEmpty(alertas)}">No hay productos con stock bajo o agotado.</p><a class="alerta-stock" th:each="producto : ${alertas}" th:href="@{/productos/form/{id}(id=${producto.id})}"><div><strong th:text="${producto.nombre}"></strong><small th:text="${producto.stock == 0 ? 'Sin existencias' : 'Stock bajo'}"></small></div><span th:text="${producto.stock + ' uds.'}"></span></a></section>
-<section class="panel" th:unless="${esAdmin}"><h2>Mi perfil</h2><p>Mantenga actualizados sus datos personales.</p><a class="boton-secundario" th:href="@{/clientes/perfil}">Editar mis datos ↗</a></section></div></main></body></html>
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resumen | Yate</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+    <div th:replace="~{fragmentos/menu :: menu}"></div>
+    <main>
+        <header class="encabezado-pagina">
+            <div><span class="etiqueta">PANEL DE CONTROL</span>
+                <h1 th:text="${esAdmin ? 'Inventario y ventas' : 'Resumen de mi cuenta'}"></h1>
+                <p>Consulte existencias y operaciones registradas en el sistema.</p>
+            </div><a class="boton" th:if="${esAdmin}" th:href="@{/productos/form}">＋ Añadir producto</a><a class="boton"
+                th:unless="${esAdmin}" th:href="@{/encabezados/compra}">＋ Nueva compra</a>
+        </header>
+        <section class="indicadores" aria-label="Resumen de operaciones">
+            <article th:if="${esAdmin}"><span>PRODUCTOS</span><strong
+                    th:text="${numeroProductos}"></strong><small>Referencias registradas</small></article>
+            <article th:if="${esAdmin}"><span>UNIDADES EN STOCK</span><strong
+                    th:text="${unidades}"></strong><small>Existencias disponibles</small></article>
+            <article><span th:text="${esAdmin ? 'VENTAS REGISTRADAS' : 'MIS COMPRAS'}"></span><strong
+                    th:text="${numeroVentas}"></strong><small>Operaciones totales</small></article>
+            <article><span th:text="${esAdmin ? 'IMPORTE DE VENTAS' : 'TOTAL DE MIS COMPRAS'}"></span><strong
+                    class="importe"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalVentas, 1, 'POINT', 2, 'COMMA')}"></strong><small>Acumulado
+                    registrado</small></article>
+        </section>
+        <div class="dashboard-layout">
+            <section class="panel">
+                <header class="panel-titulo">
+                    <h2 th:text="${esAdmin ? 'Últimas ventas' : 'Mis últimas compras'}"></h2><a
+                        th:href="@{/encabezados/listar}">Ver todas ↗</a>
+                </header>
+                <p class="vacio" th:if="${#lists.isEmpty(compras)}">Todavía no hay operaciones registradas.</p>
+                <div class="tabla" th:unless="${#lists.isEmpty(compras)}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>OPERACIÓN</th>
+                                <th>CLIENTE</th>
+                                <th>FECHA</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="compra : ${compras}">
+                                <td><a th:href="@{/encabezados/ver/{id}(id=${compra.id})}"
+                                        th:text="${'#' + compra.id}"></a></td>
+                                <td th:text="${compra.cliente.nombre + ' ' + compra.cliente.apellido}"></td>
+                                <td th:text="${#temporals.format(compra.fecha, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${#numbers.formatDecimal(compra.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel" th:if="${esAdmin}">
+                <header class="panel-titulo">
+                    <h2>Alertas de stock</h2><span class="contador" th:text="${#lists.size(alertas)}"></span>
+                </header>
+                <p class="vacio" th:if="${#lists.isEmpty(alertas)}">No hay productos con stock bajo o agotado.</p><a
+                    class="alerta-stock" th:each="producto : ${alertas}"
+                    th:href="@{/productos/form/{id}(id=${producto.id})}">
+                    <div><strong th:text="${producto.nombre}"></strong><small
+                            th:text="${producto.stock == 0 ? 'Sin existencias' : 'Stock bajo'}"></small></div><span
+                        th:text="${producto.stock + ' uds.'}"></span>
+                </a>
+            </section>
+            <section class="panel" th:unless="${esAdmin}">
+                <h2>Mi perfil</h2>
+                <p>Mantenga actualizados sus datos personales.</p><a class="boton-secundario"
+                    th:href="@{/clientes/perfil}">Editar mis datos ↗</a>
+            </section>
+        </div>
+    </main>
+</body>
+
+</html>

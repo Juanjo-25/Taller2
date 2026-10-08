@@ -1,15 +1,66 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Factura | Yate</title><link rel="stylesheet" th:href="@{/css/estilos.css}"><script defer th:src="@{/js/factura.js}"></script></head>
-<body><div th:replace="~{fragmentos/menu :: menu}"></div>
-<main class="pagina-factura">
-<header class="encabezado-pagina acciones-factura"><div><span class="etiqueta">COMPROBANTE DE COMPRA</span><h1>Factura de compra</h1><p>Imprima su factura o guárdela como PDF desde el diálogo de impresión.</p></div><button type="button" id="imprimir-factura">Imprimir factura</button></header>
-<p class="mensaje acciones-factura" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
-<article class="factura" th:attr="data-imprimir=${imprimirFactura == true}">
-<header class="factura-cabecera"><div><h2>Yate</h2><p>Inventario y ventas</p></div><div><h2 th:text="${'Factura #' + encabezado.id}"></h2><p th:text="${#temporals.format(encabezado.fecha, 'dd/MM/yyyy HH:mm')}"></p></div></header>
-<section class="factura-cliente"><span>CLIENTE</span><h3 th:text="${encabezado.cliente.nombre + ' ' + encabezado.cliente.apellido}"></h3><p th:text="${encabezado.cliente.email}"></p></section>
-<div class="tabla"><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead><tbody><tr th:each="detalle : ${detalles}"><td th:text="${detalle.producto.nombre}"></td><td th:text="${detalle.cantidad}"></td><td th:text="${'$ ' + #numbers.formatDecimal(detalle.precioUnitarioCompra, 1, 'POINT', 2, 'COMMA')}"></td><td th:text="${'$ ' + #numbers.formatDecimal(detalle.valor, 1, 'POINT', 2, 'COMMA')}"></td></tr></tbody></table></div>
-<div class="factura-total"><span>Total de la compra</span><strong th:text="${'$ ' + #numbers.formatDecimal(encabezado.total, 1, 'POINT', 2, 'COMMA')}"></strong></div>
-<footer class="factura-pie">Gracias por su compra.</footer>
-</article><a class="acciones-factura boton-secundario" th:href="@{/encabezados/listar}">Volver al historial</a>
-</main></body></html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Factura | Yate</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script defer th:src="@{/js/factura.js}"></script>
+</head>
+
+<body>
+    <div th:replace="~{fragmentos/menu :: menu}"></div>
+    <main class="pagina-factura">
+        <header class="encabezado-pagina acciones-factura">
+            <div><span class="etiqueta">COMPROBANTE DE COMPRA</span>
+                <h1>Factura de compra</h1>
+                <p>Imprima su factura o guárdela como PDF desde el diálogo de impresión.</p>
+            </div><button type="button" id="imprimir-factura">Imprimir factura</button>
+        </header>
+        <p class="mensaje acciones-factura" role="status" th:if="${mensaje}" th:text="${mensaje}"></p>
+        <article class="factura" th:attr="data-imprimir=${imprimirFactura == true}">
+            <header class="factura-cabecera">
+                <div>
+                    <h2>Yate</h2>
+                    <p>Inventario y ventas</p>
+                </div>
+                <div>
+                    <h2 th:text="${'Factura #' + encabezado.id}"></h2>
+                    <p th:text="${#temporals.format(encabezado.fecha, 'dd/MM/yyyy HH:mm')}"></p>
+                </div>
+            </header>
+            <section class="factura-cliente"><span>CLIENTE</span>
+                <h3 th:text="${encabezado.cliente.nombre + ' ' + encabezado.cliente.apellido}"></h3>
+                <p th:text="${encabezado.cliente.email}"></p>
+            </section>
+            <div class="tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="detalle : ${detalles}">
+                            <td th:text="${detalle.producto.nombre}"></td>
+                            <td th:text="${detalle.cantidad}"></td>
+                            <td
+                                th:text="${'$ ' + #numbers.formatDecimal(detalle.precioUnitarioCompra, 1, 'POINT', 2, 'COMMA')}">
+                            </td>
+                            <td th:text="${'$ ' + #numbers.formatDecimal(detalle.valor, 1, 'POINT', 2, 'COMMA')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="factura-total"><span>Total de la compra</span><strong
+                    th:text="${'$ ' + #numbers.formatDecimal(encabezado.total, 1, 'POINT', 2, 'COMMA')}"></strong></div>
+            <footer class="factura-pie">Gracias por su compra.</footer>
+        </article><a class="acciones-factura boton-secundario" th:href="@{/encabezados/listar}">Volver al historial</a>
+    </main>
+</body>
+
+</html>

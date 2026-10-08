@@ -13,7 +13,7 @@ a:hover { text-decoration:underline; }
 .app-header nav a:hover,.app-header nav a.activo { background:#223830; border-color:#36644c; color:var(--verde); text-decoration:none; }
 .sesion { display:flex; gap:12px; align-items:center; }
 .sesion form { margin:0; }
-.rol-sesion { background:#ebaa53; color:#26313a; border-radius:50%; width:40px; height:40px; display:grid; place-items:center; font-size:11px; font-weight:700; }
+.rol-sesion { background:#ebaa53; color:#26313a; border-radius:8px; min-height:40px; padding:8px 12px; display:grid; place-items:center; text-align:center; font-size:11px; font-weight:700; }
 main { max-width:1440px; margin:0 auto; padding:30px 32px 56px; }
 h1 { font-size:28px; line-height:1.2; letter-spacing:-.7px; margin:4px 0 14px; }
 h2 { margin:0; font-size:17px; letter-spacing:-.3px; }
@@ -144,7 +144,8 @@ body:has(.menu-lateral) { padding-left:224px; }
 .menu-lateral nav a.activo { border-color:#345f4c; background:#20382e; color:var(--verde); }
 .menu-lateral nav a:hover { background:#202e36; color:var(--texto); }
 .menu-lateral .sesion { margin: auto 0 0; padding:22px 8px 0; border-top:1px solid var(--linea); justify-content:space-between; }
-.menu-lateral .rol-sesion { border-radius:8px; width:38px; height:38px; }
+.menu-lateral .rol-sesion { min-width:0; min-height:38px; flex:0 1 auto; overflow-wrap:anywhere; }
+.menu-lateral .sesion form { flex-shrink:0; }
 @media(min-width:761px) and (max-width:1200px) { body:has(.menu-lateral) .inventario-layout { grid-template-columns:200px minmax(0,1fr); } body:has(.menu-lateral) .indicadores { grid-template-columns:repeat(2,minmax(0,1fr)); } body:has(.menu-lateral) .dashboard-layout { grid-template-columns:1fr; } body:has(.menu-lateral) .barra-productos { flex-wrap:wrap; } body:has(.menu-lateral) .buscador { flex-basis:100%; } }
 @media(max-width:760px) {
  body:has(.menu-lateral) { padding-left:0; }
