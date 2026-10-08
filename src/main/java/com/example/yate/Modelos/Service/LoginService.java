@@ -55,7 +55,7 @@ public class LoginService implements UserDetailsService {
             if (!necesitaAdministrador()) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El administrador inicial ya fue creado");
             }
-            crearCuenta(datos, true, Rol.ADMIN);
+            crearCuenta(datos, true, Rol.SUPER_ADMIN);
         });
     }
 
@@ -73,6 +73,17 @@ public class LoginService implements UserDetailsService {
         login.setActivo(activo);
         login.setRol(rol);
         loginDAO.saveAndFlush(login);
+    }
+
+    @Transactional
+    public void activarCuenta(Long id, Rol rol, String correoAdministrador) {
+        Login responsable = buscarLogin(correoAdministrador);
+        if (!responsable.isActivo() || (responsable.getRol() != Rol.SUPER_ADMIN
+                && (responsable.getRol() != Rol.ADMIN || rol != Rol.CLIENTE))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Solo un superadministrador puede asignar roles de administración");
+        }
+        activarCuenta(id, rol);
     }
 
     @Transactional

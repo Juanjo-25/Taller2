@@ -58,14 +58,14 @@ class LoginTests {
     void administradorInicialSoloUnaVez() throws Exception {
         cuentas.deleteAll();
         mvc.perform(get("/login/ingresar")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Crear administrador inicial")));
+                .andExpect(content().string(containsString("Crear superadministrador inicial")));
         mvc.perform(get("/login/inicializar")).andExpect(status().isOk());
         mvc.perform(post("/login/inicializar").with(csrf()).param("email", "admin@example.com")
                 .param("contrasena", "Admin123!"))
                 .andExpect(redirectedUrl("/login/ingresar"));
         Login admin = cuentas.findByEmail("admin@example.com").orElseThrow();
         assertThat(admin.isActivo()).isTrue();
-        assertThat(admin.getRol()).isEqualTo(Rol.ADMIN);
+        assertThat(admin.getRol()).isEqualTo(Rol.SUPER_ADMIN);
         assertThat(codificador.matches("Admin123!", admin.getContrasena())).isTrue();
         mvc.perform(post("/login/inicializar").with(csrf()).param("email", "otro@example.com")
                 .param("contrasena", "Admin123!"))
@@ -157,4 +157,37 @@ class LoginTests {
         mvc.perform(post("/login/activar/" + cuenta.getId()).session(admin).with(csrf())
                 .param("rol", "ADMIN")).andExpect(status().isConflict());
     }
+    @Test
+    void adminNoPuedeAsignarRolesPrivilegiados() throws Exception {
+        Login admin = registrar("normal@example.com");
+        loginService.activarCuenta(admin.getId(), Rol.ADMIN);
+        Login pendiente = registrar("pendiente@example.com");
+        MockHttpSession sesion = ingresar(admin.getEmail(), "1234");
+        mvc.perform(get("/login/pendientes").session(sesion)).andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.not(containsString("value=\"SUPER_ADMIN\""))))
+                .andExpect(content().string(org.hamcrest.Matchers.not(containsString("value=\"ADMIN\""))));
+        for (String rol : new String[]{"ADMIN", "SUPER_ADMIN"}) {
+            mvc.perform(post("/login/activar/" + pendiente.getId()).session(sesion).with(csrf())
+                    .param("rol", rol)).andExpect(status().isForbidden());
+        }
+        assertThat(cuentas.findById(pendiente.getId()).orElseThrow().isActivo()).isFalse();
+        mvc.perform(post("/login/activar/" + pendiente.getId()).session(sesion).with(csrf())
+                .param("rol", "CLIENTE")).andExpect(redirectedUrl("/login/pendientes"));
+    }
+
+    @Test
+    void superAdminAccedeYAsignaSuperAdmin() throws Exception {
+        Login pendiente = registrar("super@example.com");
+        MockHttpSession sesion = ingresar("admin@example.com", "Admin123!");
+        for (String ruta : new String[]{"/", "/productos/listar", "/clientes/listar", "/encabezados/listar", "/detalles/listar", "/login/pendientes"}) {
+            mvc.perform(get(ruta).session(sesion)).andExpect(status().isOk());
+        }
+        mvc.perform(get("/").session(sesion)).andExpect(content().string(containsString("Superadmin")));
+        mvc.perform(post("/login/activar/" + pendiente.getId()).session(sesion).with(csrf())
+                .param("rol", "SUPER_ADMIN")).andExpect(redirectedUrl("/login/pendientes"));
+        assertThat(cuentas.findById(pendiente.getId()).orElseThrow().getRol()).isEqualTo(Rol.SUPER_ADMIN);
+        mvc.perform(get("/productos/listar").session(ingresar(pendiente.getEmail(), "1234")))
+                .andExpect(status().isOk());
+    }
+
 }

@@ -77,7 +77,7 @@ public class LoginController {
             return "login/registro";
         }
         mensajes.addFlashAttribute("mensaje", inicial
-                ? "Administrador creado. Ya puede iniciar sesión."
+                ? "Superadministrador creado. Ya puede iniciar sesión."
                 : "Registro completado. Un administrador debe aprobar su cuenta antes de iniciar sesión.");
         return "redirect:/login/ingresar";
     }
@@ -89,8 +89,9 @@ public class LoginController {
     }
 
     @PostMapping("/activar/{id}")
-    public String activar(@PathVariable Long id, @RequestParam Rol rol, RedirectAttributes mensajes) {
-        loginService.activarCuenta(id, rol);
+    public String activar(@PathVariable Long id, @RequestParam Rol rol, RedirectAttributes mensajes,
+                          org.springframework.security.core.Authentication usuario) {
+        loginService.activarCuenta(id, rol, usuario.getName());
         mensajes.addFlashAttribute("mensaje", "Cuenta activada correctamente");
         return "redirect:/login/pendientes";
     }

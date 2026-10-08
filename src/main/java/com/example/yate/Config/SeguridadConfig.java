@@ -20,13 +20,13 @@ public class SeguridadConfig {
         http.authorizeHttpRequests(permisos -> permisos
                 .requestMatchers("/css/**", "/js/**", "/img/**", "/error",
                         "/login/ingresar", "/login/registro", "/login/inicializar").permitAll()
-                .requestMatchers("/login/pendientes", "/login/activar/**").hasRole("ADMIN")
+                .requestMatchers("/login/pendientes", "/login/activar/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 .requestMatchers("/clientes/perfil").hasRole("CLIENTE")
-                .requestMatchers("/productos", "/productos/**").hasRole("ADMIN")
-                .requestMatchers("/clientes", "/clientes/**").hasRole("ADMIN")
+                .requestMatchers("/productos", "/productos/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                .requestMatchers("/clientes", "/clientes/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 .requestMatchers("/encabezados/compra", "/encabezados/guardar").hasRole("CLIENTE")
-                .requestMatchers("/encabezados", "/encabezados/listar", "/encabezados/ver/**").hasAnyRole("ADMIN", "CLIENTE")
-                .requestMatchers("/detalles", "/detalles/**").hasRole("ADMIN")
+                .requestMatchers("/encabezados", "/encabezados/listar", "/encabezados/ver/**").hasAnyRole("ADMIN", "SUPER_ADMIN", "CLIENTE")
+                .requestMatchers("/detalles", "/detalles/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 .requestMatchers("/", "/home").authenticated()
                 .anyRequest().denyAll())
             .formLogin(login -> login.loginPage("/login/ingresar")

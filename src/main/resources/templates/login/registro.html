@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${inicial ? 'Administrador inicial | Yate' : 'Registro | Yate'}"></title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${inicial ? 'Superadministrador inicial | Yate' : 'Registro | Yate'}"></title><link rel="stylesheet" th:href="@{/css/estilos.css}"></head>
 <body><div th:replace="~{fragmentos/menu :: menu}"></div><main class="acceso">
-<h1 th:text="${inicial ? 'Crear administrador inicial' : 'Crear una cuenta'}"></h1>
+<h1 th:text="${inicial ? 'Crear superadministrador inicial' : 'Crear una cuenta'}"></h1>
 <p th:text="${inicial ? 'Esta cuenta administrará las solicitudes de acceso. Esta configuración solo estará disponible una vez.' : 'Su cuenta quedará pendiente hasta que un administrador la apruebe.'}"></p>
 <form class="formulario" th:action="${inicial} ? @{/login/inicializar} : @{/login/registro}" th:object="${registro}" method="post">
 <div class="error" role="alert" th:if="${#fields.hasGlobalErrors()}"><p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p></div>
 <label for="email">Correo electrónico</label><input id="email" type="email" th:field="*{email}" autocomplete="username" required maxlength="254"><span class="error" th:errors="*{email}"></span>
 <label for="contrasena">Contraseña</label><input id="contrasena" name="contrasena" type="password" autocomplete="new-password" required minlength="4" maxlength="64" aria-describedby="reglas">
 <small id="reglas">Entre 4 y 64 caracteres.</small><span class="error" th:errors="*{contrasena}"></span>
-<button type="submit" th:text="${inicial ? 'Crear administrador' : 'Solicitar acceso'}"></button>
+<button type="submit" th:text="${inicial ? 'Crear superadministrador' : 'Solicitar acceso'}"></button>
 <a th:href="@{/login/ingresar}">Volver al inicio de sesión</a>
 </form></main></body></html>

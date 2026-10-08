@@ -7,6 +7,6 @@
 <div class="tabla"><table th:unless="${#lists.isEmpty(cuentas)}"><thead><tr><th>Correo</th><th>Estado</th><th>Rol y aprobación</th></tr></thead>
 <tbody><tr th:each="cuenta : ${cuentas}"><td th:text="${cuenta.email}"></td><td>Pendiente</td>
 <td><form class="acciones" th:action="@{/login/activar/{id}(id=${cuenta.id})}" method="post">
-<label th:for="${'rol-' + cuenta.id}">Rol</label><select th:id="${'rol-' + cuenta.id}" name="rol" required><option value="CLIENTE">Cliente</option><option value="ADMIN">Admin</option></select>
+<label th:for="${'rol-' + cuenta.id}">Rol</label><select th:id="${'rol-' + cuenta.id}" name="rol" required><option value="CLIENTE">Cliente</option><option th:if="${esSuperAdmin}" value="ADMIN">Admin</option><option th:if="${esSuperAdmin}" value="SUPER_ADMIN">Superadministrador</option></select>
 <button type="submit">Activar cuenta</button></form></td></tr></tbody></table></div>
 </main></body></html>

@@ -30,7 +30,7 @@ public class EncabezadoController {
         binder.setAutoGrowCollectionLimit(200);
     }
     private boolean esAdmin(Authentication usuario) {
-        return usuario.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        return usuario.getAuthorities().stream().anyMatch(a -> (a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_SUPER_ADMIN")));
     }
     @GetMapping({"", "/listar"})
     public String listar(Authentication usuario, Model model) {
